@@ -3,13 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "scripts": {
-    "build": "npm --prefix client install && npm --prefix client run build",
-    "build:client": "cd client && npm run build",
+    "build": "cd client && npm install && npm run build",
     "start": "node server/src/server.js",
     "server": "node server/src/server.js",
     "client": "cd client && npm run dev",
