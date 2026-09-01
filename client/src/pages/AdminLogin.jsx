@@ -4,8 +4,8 @@ import { soundFx } from '../utils/audio';
 import { getApiUrl } from '../config';
 
 export default function AdminLogin({ onLoginSuccess }) {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -69,7 +69,7 @@ export default function AdminLogin({ onLoginSuccess }) {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin"
+              placeholder="Enter username"
               className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
             />
           </div>
@@ -83,13 +83,9 @@ export default function AdminLogin({ onLoginSuccess }) {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Enter password"
               className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
             />
-          </div>
-
-          <div className="p-2.5 bg-[#090b10] border border-[#1d222e] text-[11px] text-[#717b8f]">
-            Default: <span className="text-white font-bold">admin</span> / <span className="text-white font-bold">admin123</span>
           </div>
 
           <button
