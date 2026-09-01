@@ -6,7 +6,6 @@ import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
-import questionsData from './questions.json' assert { type: 'json' };
 import { quizState, QUESTION_DURATION_SEC } from './state.js';
 import {
   signParticipantToken,
@@ -19,6 +18,10 @@ import {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 5000;
+
+// Read questions.json safely across all Node versions
+const questionsFilePath = path.join(__dirname, 'questions.json');
+const questionsData = JSON.parse(fs.readFileSync(questionsFilePath, 'utf-8'));
 
 const app = express();
 const server = http.createServer(app);
