@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import confetti from 'canvas-confetti';
 import {
-  Trophy,
   Clock,
-  CheckCircle2,
-  XCircle,
+  Check,
+  X,
   AlertCircle,
-  Sparkles,
   RotateCcw,
-  ArrowRight,
-  ShieldCheck,
-  Award,
   ExternalLink,
+  ArrowUpRight,
 } from 'lucide-react';
 import { soundFx } from '../utils/audio';
 import ImageModal from '../components/ImageModal';
@@ -32,15 +27,7 @@ export default function QuizResults({ token, onRestart }) {
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || 'Failed to load results');
         setData(json);
-
-        // Confetti fanfare
         soundFx.playSuccess();
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#06b6d4', '#38bdf8', '#a855f7', '#10b981'],
-        });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -53,20 +40,20 @@ export default function QuizResults({ token, onRestart }) {
 
   if (loading) {
     return (
-      <div className="min-h-[85vh] flex flex-col items-center justify-center space-y-4">
-        <div className="w-12 h-12 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-        <p className="text-sm font-mono text-cyan-300">Calculating Official Score & Debrief...</p>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-3 font-mono text-xs text-[#848d9f]">
+        <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin rounded-full" />
+        <span>GENERATING EVALUATION REPORT...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[85vh] flex items-center justify-center p-4">
-        <div className="glass-panel p-8 rounded-3xl max-w-md w-full text-center space-y-4">
-          <AlertCircle className="w-12 h-12 text-rose-400 mx-auto" />
-          <h2 className="text-xl font-bold text-white">Results Error</h2>
-          <p className="text-sm text-slate-300">{error}</p>
+      <div className="min-h-[80vh] flex items-center justify-center p-4 font-mono">
+        <div className="bg-[#14161f] border border-[#2d3345] p-6 max-w-md w-full text-center space-y-3">
+          <AlertCircle className="w-8 h-8 text-[#ef4444] mx-auto" />
+          <h2 className="text-sm font-bold text-white uppercase">Report Error</h2>
+          <p className="text-xs text-[#9ba3b5]">{error}</p>
         </div>
       </div>
     );
@@ -76,71 +63,74 @@ export default function QuizResults({ token, onRestart }) {
   const accuracy = Math.round((participant.totalCorrect / review.length) * 100);
 
   return (
-    <div className="min-h-[88vh] max-w-6xl mx-auto p-4 lg:p-8 space-y-8 relative z-10">
-      {/* Top Banner / Celebration Hero */}
-      <div className="glass-panel-glow rounded-3xl p-6 sm:p-10 border border-cyan-500/30 text-center relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-[85vh] max-w-6xl mx-auto px-4 lg:px-8 py-8 space-y-8 relative z-10">
+      
+      {/* Top Editorial Scorecard */}
+      <div className="bg-[#10131a] border border-[#222737] p-6 sm:p-8 rounded-sm space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#1f2434] pb-6">
+          <div className="space-y-1">
+            <div className="inline-flex items-center space-x-2 font-mono text-[10px] text-[#3b82f6] uppercase tracking-widest bg-[#151a29] border border-[#242e48] px-2 py-0.5 rounded-sm">
+              <span>Evaluation Finalized</span>
+            </div>
+            <h1 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight pt-1">
+              Assessment Report: {participant.name}
+            </h1>
+            <p className="text-xs font-mono text-[#7d8699]">
+              Session ID: {participant.id} • Completed at {new Date(participant.completedAt || Date.now()).toLocaleTimeString()}
+            </p>
+          </div>
 
-        <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center shadow-xl shadow-cyan-500/25 border border-cyan-300/40 mb-4">
-          <Trophy className="w-10 h-10 text-white animate-bounce" />
+          <button
+            onClick={onRestart}
+            className="flex items-center space-x-1.5 px-4 py-2 bg-[#1b202e] hover:bg-[#252c3f] border border-[#30384f] text-white font-mono text-xs uppercase font-bold rounded-sm transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Return to Lobby</span>
+          </button>
         </div>
 
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-2">
-          <Award className="w-3.5 h-3.5" />
-          <span>QUIZ COMPLETED • LIVE TELEMETRY SUBMITTED</span>
-        </div>
-
-        <h1 className="text-3xl sm:text-4xl font-black text-white">
-          Outstanding Performance, {participant.name}!
-        </h1>
-        <p className="text-sm text-slate-300 max-w-xl mx-auto mt-2">
-          Your answers have been locked, synchronized, and logged into the administrative command leaderboard.
-        </p>
-
-        {/* Metric Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto mt-8">
-          <div className="glass-panel p-4 rounded-2xl border border-cyan-500/20">
-            <p className="text-xs uppercase font-mono text-slate-400">Total Score</p>
-            <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-sky-400 mt-1">
+        {/* 4 High-Contrast Metrics Blocks */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
+          <div className="bg-[#0b0c11] border border-[#1d212d] p-4 rounded-sm">
+            <p className="text-[10px] text-[#717b8f] uppercase tracking-wider">Final Score</p>
+            <p className="text-3xl font-bold text-white mt-1">
               {participant.score}
-              <span className="text-xs text-slate-400 font-normal"> / 100</span>
+              <span className="text-xs text-[#525a6c] font-normal"> / 100</span>
             </p>
           </div>
 
-          <div className="glass-panel p-4 rounded-2xl border border-emerald-500/20">
-            <p className="text-xs uppercase font-mono text-slate-400">Accuracy</p>
-            <p className="text-3xl font-black text-emerald-400 mt-1">
+          <div className="bg-[#0b0c11] border border-[#1d212d] p-4 rounded-sm">
+            <p className="text-[10px] text-[#717b8f] uppercase tracking-wider">Accuracy Rate</p>
+            <p className="text-3xl font-bold text-emerald-400 mt-1">
               {accuracy}%
-              <span className="text-xs text-slate-400 font-normal"> ({participant.totalCorrect}/10)</span>
+              <span className="text-xs text-[#525a6c] font-normal"> ({participant.totalCorrect}/10)</span>
             </p>
           </div>
 
-          <div className="glass-panel p-4 rounded-2xl border border-purple-500/20">
-            <p className="text-xs uppercase font-mono text-slate-400">Total Time</p>
-            <p className="text-3xl font-black text-purple-300 mt-1">
+          <div className="bg-[#0b0c11] border border-[#1d212d] p-4 rounded-sm">
+            <p className="text-[10px] text-[#717b8f] uppercase tracking-wider">Total Time</p>
+            <p className="text-3xl font-bold text-[#60a5fa] mt-1">
               {participant.totalTimeSec}s
             </p>
           </div>
 
-          <div className="glass-panel p-4 rounded-2xl border border-amber-500/20">
-            <p className="text-xs uppercase font-mono text-slate-400">Avg Speed</p>
-            <p className="text-3xl font-black text-amber-400 mt-1">
+          <div className="bg-[#0b0c11] border border-[#1d212d] p-4 rounded-sm">
+            <p className="text-[10px] text-[#717b8f] uppercase tracking-wider">Average Speed</p>
+            <p className="text-3xl font-bold text-[#f59e0b] mt-1">
               {(participant.totalTimeSec / 10).toFixed(1)}s
-              <span className="text-xs text-slate-400 font-normal"> / Q</span>
+              <span className="text-xs text-[#525a6c] font-normal"> / Q</span>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Detailed Question Review Section */}
+      {/* Question Review Breakdown */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white flex items-center space-x-2">
-            <Sparkles className="w-5 h-5 text-cyan-400" />
-            <span>Question Review & Explanations</span>
+        <div className="flex items-center justify-between border-b border-[#1e2332] pb-3">
+          <h2 className="font-display font-bold text-lg text-white uppercase tracking-tight">
+            Itemized Hardware Review
           </h2>
-          <span className="text-xs font-mono text-slate-400">10 Components Analyzed</span>
+          <span className="font-mono text-xs text-[#717b8f]">10 Items Logged</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -149,83 +139,65 @@ export default function QuizResults({ token, onRestart }) {
             return (
               <div
                 key={item.id}
-                className={`glass-panel p-5 rounded-2xl border transition-all ${
-                  isCorrect
-                    ? 'border-emerald-500/30 hover:border-emerald-500/60'
-                    : 'border-rose-500/30 hover:border-rose-500/60'
-                }`}
+                className="bg-[#101219] border border-[#212635] p-4 rounded-sm space-y-3 font-mono text-xs"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
-                      Q{idx + 1}
+                    <span className="bg-[#191d2a] text-white font-bold px-2 py-0.5 rounded-sm">
+                      Q{String(idx + 1).padStart(2, '0')}
                     </span>
                     <span
-                      className={`text-xs font-bold font-mono px-2 py-0.5 rounded flex items-center space-x-1 ${
+                      className={`px-2 py-0.5 font-bold rounded-sm border ${
                         isCorrect
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                          : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          ? 'bg-[#102419] border-[#10b981] text-[#34d399]'
+                          : 'bg-[#2b1216] border-[#ef4444] text-[#f87171]'
                       }`}
                     >
-                      {isCorrect ? (
-                        <>
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>CORRECT</span>
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-3.5 h-3.5" />
-                          <span>{item.isTimedOut ? 'TIMED OUT' : 'INCORRECT'}</span>
-                        </>
-                      )}
+                      {isCorrect ? 'CORRECT' : item.isTimedOut ? 'TIMED OUT' : 'INCORRECT'}
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-1 text-xs font-mono text-slate-400">
+                  <div className="flex items-center space-x-1 text-[#717b8f]">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{item.timeSpentSec}s</span>
                   </div>
                 </div>
 
-                {/* Image & Answers */}
+                {/* Photo & Description */}
                 <div className="flex gap-4 items-start">
                   <div
                     onClick={() => setSelectedImage(item.image)}
-                    className="w-24 h-24 rounded-xl overflow-hidden bg-slate-950 border border-slate-700 shrink-0 cursor-pointer group relative"
+                    className="w-24 h-24 bg-[#08090d] border border-[#242938] shrink-0 cursor-pointer relative group overflow-hidden"
                   >
                     <img
                       src={item.image}
                       alt={`Question ${item.id}`}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      className="w-full h-full object-contain"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                      <ExternalLink className="w-4 h-4 text-cyan-300" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                      <ExternalLink className="w-3.5 h-3.5 text-white" />
                     </div>
                   </div>
 
-                  <div className="flex-1 min-w-0 space-y-1.5 text-xs">
-                    <div>
-                      <span className="text-slate-400">Your Selection: </span>
-                      <span
-                        className={`font-bold ${
-                          isCorrect ? 'text-emerald-400' : 'text-rose-400 line-through'
-                        }`}
-                      >
-                        {item.userAnswer ? `[${item.userAnswer}] ${item.userAnswerText}` : 'None (Timed Out)'}
+                  <div className="flex-1 min-w-0 space-y-1.5 font-sans">
+                    <div className="font-mono text-[11px]">
+                      <span className="text-[#717b8f]">Your Pick: </span>
+                      <span className={isCorrect ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
+                        {item.userAnswer ? `[${item.userAnswer}] ${item.userAnswerText}` : 'Timed Out (None)'}
                       </span>
                     </div>
 
                     {!isCorrect && (
-                      <div>
-                        <span className="text-slate-400">Correct Answer: </span>
+                      <div className="font-mono text-[11px]">
+                        <span className="text-[#717b8f]">Key: </span>
                         <span className="text-emerald-400 font-bold">
                           [{item.correctAnswer}] {item.correctAnswerText}
                         </span>
                       </div>
                     )}
 
-                    <p className="text-[11px] text-slate-300 leading-relaxed bg-slate-900/60 p-2 rounded-lg border border-slate-800/80 mt-2">
+                    <p className="text-[11px] text-[#9ca3af] leading-relaxed pt-1 border-t border-[#1c202c]">
                       {item.explanation}
                     </p>
                   </div>
@@ -236,23 +208,12 @@ export default function QuizResults({ token, onRestart }) {
         </div>
       </div>
 
-      {/* Action Footer */}
-      <div className="pt-6 border-t border-slate-800 text-center">
-        <button
-          onClick={onRestart}
-          className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-sm border border-slate-700 transition"
-        >
-          <RotateCcw className="w-4 h-4" />
-          <span>Exit Arena / Return to Lobby</span>
-        </button>
-      </div>
-
-      {/* Zoom Modal */}
+      {/* Image Zoom Inspector Modal */}
       <ImageModal
         isOpen={!!selectedImage}
         onClose={() => setSelectedImage(null)}
         src={selectedImage}
-        alt="Question Review Detail"
+        alt="Hardware Component Detail"
       />
     </div>
   );

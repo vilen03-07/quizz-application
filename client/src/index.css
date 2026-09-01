@@ -4,77 +4,66 @@
 
 @layer base {
   body {
-    @apply bg-[#060913] text-slate-100 font-sans antialiased overflow-x-hidden select-none;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(14, 165, 233, 0.04) 0px, transparent 60%);
-    background-attachment: fixed;
+    @apply bg-[#090a0e] text-[#f1f3f7] font-sans antialiased overflow-x-hidden select-none;
+    background-color: #090a0e;
   }
 }
 
-/* Custom Cyber Glassmorphism */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(6, 182, 212, 0.08);
+/* Sharp, Tactile UI Controls */
+.hud-panel {
+  background-color: #101218;
+  border: 1px solid #222632;
 }
 
-.glass-panel-glow {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  box-shadow: 0 0 25px rgba(6, 182, 212, 0.25), inset 0 0 15px rgba(6, 182, 212, 0.08);
+.hud-panel-contrast {
+  background-color: #141720;
+  border: 1px solid #2d3342;
 }
 
-.glass-card-interactive {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+.tactile-option {
+  background-color: #111319;
+  border: 1px solid #232733;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 }
 
-.glass-card-interactive:hover {
-  background: rgba(30, 41, 59, 0.85);
-  border-color: rgba(56, 189, 248, 0.5);
-  transform: translateY(-2px) scale(1.008);
-  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.2);
+.tactile-option:hover:not(:disabled) {
+  background-color: #181c26;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
 }
 
-/* Custom Scrollbar */
+.tactile-option.selected {
+  background-color: #1b2333;
+  border-color: #3b82f6;
+}
+
+/* Minimal Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: #0c0d12;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.25);
-  border-radius: 4px;
+  background: #252a37;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.55);
+  background: #3c4356;
 }
 
-/* Radial countdown glow ring */
-.timer-pulse-critical {
-  animation: criticalPulse 0.8s ease-in-out infinite;
-}
-
-@keyframes criticalPulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 6px #f43f5e);
-    stroke: #f43f5e;
-  }
-  50% {
-    filter: drop-shadow(0 0 18px #f43f5e);
-    stroke: #fda4af;
-  }
+/* Crisp Technical Data Badges */
+.data-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 2px;
+  background-color: #161922;
+  border: 1px solid #292e3d;
+  color: #9ba3b5;
 }

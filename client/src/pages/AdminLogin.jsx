@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Lock, User, ArrowRight, AlertTriangle, KeyRound } from 'lucide-react';
+import { Shield, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
 import { soundFx } from '../utils/audio';
 
 export default function AdminLogin({ onLoginSuccess }) {
@@ -36,74 +36,68 @@ export default function AdminLogin({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 relative z-10">
-      <div className="glass-panel-glow rounded-3xl p-8 sm:p-10 max-w-md w-full border border-purple-500/30 relative">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center shadow-xl shadow-purple-500/30 border border-purple-400/40 mx-auto mb-6">
-          <Shield className="w-8 h-8 text-white" />
-        </div>
-
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-black text-white">Admin Command Center</h2>
-          <p className="text-xs text-slate-400 mt-1">Real-time live streaming & participant monitoring</p>
+    <div className="min-h-[80vh] flex items-center justify-center p-4 relative z-10 font-mono">
+      <div className="bg-[#10121a] border border-[#262c3b] p-8 max-w-md w-full rounded-sm space-y-6">
+        
+        <div className="border-b border-[#202534] pb-4 text-center">
+          <div className="w-10 h-10 bg-white text-black font-bold flex items-center justify-center mx-auto mb-3 text-sm">
+            ADM
+          </div>
+          <h2 className="font-display font-bold text-lg text-white uppercase tracking-tight">
+            Admin Mission Control
+          </h2>
+          <p className="text-[11px] text-[#717b8f] mt-0.5">
+            Authenticate to monitor live telemetry streams
+          </p>
         </div>
 
         {error && (
-          <div className="mb-5 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center space-x-2">
-            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="p-3 bg-[#241216] border border-[#6b212e] text-[#fca5a5] text-xs flex items-center space-x-2">
+            <AlertCircle className="w-4 h-4 text-[#ef4444] shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[#9ba3b5] uppercase font-bold mb-1 tracking-wider text-[10px]">
               Admin Username
             </label>
-            <div className="relative">
-              <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
-                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition"
-              />
-            </div>
+            <input
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="admin"
+              className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
+            <label className="block text-[#9ba3b5] uppercase font-bold mb-1 tracking-wider text-[10px]">
               Password
             </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition"
-              />
-            </div>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
+            />
           </div>
 
-          <div className="p-3 bg-purple-950/40 border border-purple-500/20 rounded-xl text-left">
-            <p className="text-[11px] text-purple-300 font-mono">
-              💡 Default Credentials: <br />
-              Username: <span className="text-white font-bold">admin</span> | Password:{' '}
-              <span className="text-white font-bold">admin123</span>
-            </p>
+          <div className="p-2.5 bg-[#090b10] border border-[#1d222e] text-[11px] text-[#717b8f]">
+            Default: <span className="text-white font-bold">admin</span> / <span className="text-white font-bold">admin123</span>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 py-3.5 px-6 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold uppercase text-xs tracking-wider flex items-center justify-center space-x-2 shadow-lg shadow-purple-500/25 transition cursor-pointer"
+            className="w-full mt-3 py-3 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold uppercase tracking-wider text-xs flex items-center justify-center space-x-2 rounded-sm transition cursor-pointer"
           >
-            <span>{loading ? 'Authenticating...' : 'Access Command Center'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{loading ? 'AUTHENTICATING...' : 'ACCESS DASHBOARD'}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
       </div>

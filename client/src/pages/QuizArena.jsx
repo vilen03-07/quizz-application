@@ -4,10 +4,8 @@ import {
   Maximize2,
   AlertTriangle,
   CheckCircle2,
-  Sparkles,
-  ChevronRight,
   ShieldAlert,
-  Zap,
+  ChevronRight,
 } from 'lucide-react';
 import { soundFx } from '../utils/audio';
 import ImageModal from '../components/ImageModal';
@@ -43,7 +41,6 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
       if (!res.ok) throw new Error(data.error || 'Failed to fetch question');
 
       if (data.status === 'NOT_STARTED') {
-        // Trigger quiz start
         const startRes = await fetch('/api/quiz/start', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
@@ -83,12 +80,12 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        logViolation('TAB_SWITCH', 'User minimized browser or switched tabs');
+        logViolation('TAB_SWITCH', 'User switched active tab/window');
       }
     };
 
     const handleBlur = () => {
-      logViolation('WINDOW_BLUR', 'User unfocused or clicked outside quiz window');
+      logViolation('WINDOW_BLUR', 'User unfocused quiz window');
     };
 
     window.addEventListener('visibilitychange', handleVisibilityChange);
@@ -102,8 +99,8 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
 
   const logViolation = async (type, details) => {
     setViolations((v) => v + 1);
-    setViolationAlert(`Integrity Warning: ${type.replace('_', ' ')} detected! Admin notified.`);
-    setTimeout(() => setViolationAlert(null), 5000);
+    setViolationAlert(`Integrity Notice: ${type.replace('_', ' ')} detected and logged.`);
+    setTimeout(() => setViolationAlert(null), 4000);
 
     try {
       await fetch('/api/quiz/violation', {
@@ -117,21 +114,17 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
     } catch (e) {}
   };
 
-  // Socket listener for admin resets or timeout broadcasts
+  // Socket listener
   useEffect(() => {
     if (!socket) return;
 
     const handleReset = (data) => {
-      alert(data.message || 'Your session was reset by the administrator.');
+      alert(data.message || 'Session reset by administrator.');
       window.location.reload();
     };
 
-    const handleTimeoutAdvance = (data) => {
-      if (data.isCompleted) {
-        fetchCurrentState();
-      } else {
-        fetchCurrentState();
-      }
+    const handleTimeoutAdvance = () => {
+      fetchCurrentState();
     };
 
     socket.on('quiz:force:reset', handleReset);
@@ -143,7 +136,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
     };
   }, [socket, fetchCurrentState]);
 
-  // Submit answer handler
+  // Submit answer
   const handleSelectOption = useCallback(
     async (optionId, isAutoTimeout = false) => {
       if (isLocked || isSubmittingRef.current || !question) return;
@@ -174,7 +167,6 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to submit answer');
 
-        // Short transition delay for tactile visual confirmation
         setTimeout(() => {
           if (data.isComplete) {
             soundFx.playSuccess();
@@ -188,7 +180,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
             setRemainingTime(DURATION_SEC);
             questionStartTimeRef.current = Date.now();
           }
-        }, 600);
+        }, 500);
       } catch (err) {
         setError(err.message);
         setIsLocked(false);
@@ -198,7 +190,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
     [isLocked, question, token, onQuizComplete]
   );
 
-  // 30-Second Countdown Clock
+  // 30s Countdown Clock
   useEffect(() => {
     if (loading || isLocked || !question) return;
 
@@ -207,14 +199,12 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
       const left = Math.max(0, Number((DURATION_SEC - elapsedSec).toFixed(1)));
       setRemainingTime(left);
 
-      // Sound audio cues
       if (Math.floor(left) <= 5 && left > 0 && Math.floor(left) !== Math.floor(left + 0.1)) {
         soundFx.playUrgentTick();
       } else if (Math.floor(left) <= 10 && left > 5 && Math.floor(left) !== Math.floor(left + 0.1)) {
         soundFx.playTick();
       }
 
-      // Time expired
       if (left <= 0) {
         clearInterval(timerRef.current);
         handleSelectOption(null, true);
@@ -226,7 +216,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
     };
   }, [loading, isLocked, question, handleSelectOption]);
 
-  // Keyboard shortcuts (A, B, C, D or 1, 2, 3, 4)
+  // Keyboard shortcuts (A-D, 1-4)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (isLocked || !question || isSubmittingRef.current) return;
@@ -258,244 +248,189 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
 
   if (loading) {
     return (
-      <div className="min-h-[85vh] flex flex-col items-center justify-center space-y-4">
-        <div className="w-16 h-16 rounded-2xl border-2 border-cyan-400 border-t-transparent animate-spin flex items-center justify-center">
-          <Zap className="w-6 h-6 text-cyan-400 animate-pulse" />
-        </div>
-        <p className="text-sm font-mono text-cyan-300 tracking-wider">Synchronizing Arena Telemetry...</p>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-3 font-mono text-xs text-[#848d9f]">
+        <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin rounded-full" />
+        <span>SYNCING ARENA TELEMETRY...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[85vh] flex items-center justify-center p-4">
-        <div className="glass-panel p-8 rounded-3xl max-w-md w-full border border-rose-500/40 text-center space-y-4">
-          <AlertTriangle className="w-12 h-12 text-rose-400 mx-auto" />
-          <h2 className="text-xl font-bold text-white">Synchronization Error</h2>
-          <p className="text-sm text-rose-300">{error}</p>
+      <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="bg-[#14161f] border border-[#2d3345] p-6 max-w-md w-full text-center space-y-4 font-mono">
+          <AlertTriangle className="w-8 h-8 text-[#ef4444] mx-auto" />
+          <h2 className="text-sm font-bold text-white uppercase">Sync Failure</h2>
+          <p className="text-xs text-[#9ba3b5]">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition"
+            className="w-full py-2 bg-white text-black font-bold text-xs uppercase rounded-sm"
           >
-            Reload Arena
+            Reload Session
           </button>
         </div>
       </div>
     );
   }
 
-  // Timer visual properties
-  const timerPct = (remainingTime / DURATION_SEC) * 100;
   const isCritical = remainingTime <= 6;
   const isWarning = remainingTime <= 12 && !isCritical;
-  const timerColor = isCritical
-    ? '#f43f5e' // Rose red
-    : isWarning
-    ? '#f59e0b' // Amber
-    : '#06b6d4'; // Cyan
+  const timerBarPct = (remainingTime / DURATION_SEC) * 100;
 
   return (
-    <div className="min-h-[88vh] max-w-6xl mx-auto p-4 lg:p-6 flex flex-col justify-between relative z-10">
+    <div className="min-h-[85vh] max-w-6xl mx-auto px-4 lg:px-8 py-6 flex flex-col justify-between relative z-10">
       {/* Violation Alert Toast */}
       {violationAlert && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-rose-950/95 border-2 border-rose-500 text-rose-200 px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 backdrop-blur-xl animate-bounce">
-          <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0" />
-          <span className="text-xs font-bold font-mono">{violationAlert}</span>
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-[#2b1418] border border-[#ef4444] text-white px-4 py-2 text-xs font-mono flex items-center space-x-2 shadow-lg">
+          <ShieldAlert className="w-4 h-4 text-[#ef4444] shrink-0" />
+          <span>{violationAlert}</span>
         </div>
       )}
 
-      {/* Top Arena Header: Progress bar, question index, authoritative 30s radial timer */}
-      <div className="glass-panel rounded-2xl p-4 sm:p-5 border border-cyan-500/20 mb-6 flex flex-wrap items-center justify-between gap-4">
-        {/* Left: Progress info */}
-        <div className="flex items-center space-x-4">
-          <div className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-sm font-black tracking-wider flex items-center space-x-2">
-            <span>QUESTION</span>
-            <span className="text-lg text-white">
-              {currentQuestionIndex + 1}
+      {/* Top Header: Linear Progress & Digital Precision Timer */}
+      <div className="bg-[#10121a] border border-[#222736] p-4 rounded-sm space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center space-x-3">
+            <span className="bg-[#191d2a] border border-[#2d354a] text-white font-bold px-2.5 py-1 rounded-sm">
+              QUESTION {String(currentQuestionIndex + 1).padStart(2, '0')} / {String(totalQuestions).padStart(2, '0')}
             </span>
-            <span className="text-slate-400">/ {totalQuestions}</span>
+            <span className="text-[#7d8699] hidden sm:inline">VISUAL IDENTIFICATION</span>
           </div>
 
-          <div className="hidden sm:block">
-            <div className="w-48 bg-slate-900/90 rounded-full h-2.5 border border-slate-700 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-cyan-500 to-purple-500 h-full rounded-full transition-all duration-300"
-                style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
-              />
-            </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-[#7d8699]">REMAINING:</span>
+            <span
+              className={`font-bold px-2 py-0.5 rounded-sm border ${
+                isCritical
+                  ? 'bg-[#3b1219] border-[#ef4444] text-[#ef4444]'
+                  : isWarning
+                  ? 'bg-[#362512] border-[#f59e0b] text-[#f59e0b]'
+                  : 'bg-[#141c2d] border-[#3b82f6] text-[#60a5fa]'
+              }`}
+            >
+              {remainingTime.toFixed(1)}s
+            </span>
           </div>
         </div>
 
-        {/* Center: Instruction badge */}
-        <div className="hidden md:flex items-center space-x-2 text-xs font-mono text-slate-400">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span>IDENTIFY THE HARDWARE COMPONENT SHOWN BELOW</span>
-        </div>
-
-        {/* Right: Authoritative 30s Timer */}
-        <div className="flex items-center space-x-3">
-          <div className="relative flex items-center justify-center">
-            <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 48 48">
-              <circle
-                cx="24"
-                cy="24"
-                r="19"
-                stroke="currentColor"
-                strokeWidth="4"
-                className="text-slate-800/80"
-                fill="transparent"
-              />
-              <circle
-                cx="24"
-                cy="24"
-                r="19"
-                stroke={timerColor}
-                strokeWidth="4"
-                strokeDasharray={119.38}
-                strokeDashoffset={119.38 - (119.38 * timerPct) / 100}
-                strokeLinecap="round"
-                fill="transparent"
-                className={`transition-all duration-100 ${isCritical ? 'timer-pulse-critical' : ''}`}
-              />
-            </svg>
-            <div className="absolute text-center">
-              <span
-                className={`text-sm font-mono font-black ${
-                  isCritical ? 'text-rose-400 animate-pulse' : isWarning ? 'text-amber-400' : 'text-cyan-300'
-                }`}
-              >
-                {Math.ceil(remainingTime)}s
-              </span>
-            </div>
-          </div>
-
-          <div className="text-right">
-            <p className="text-[10px] uppercase font-mono tracking-widest text-slate-400">Time Limit</p>
-            <p className={`text-xs font-bold font-mono ${isCritical ? 'text-rose-400' : 'text-slate-200'}`}>
-              {isCritical ? 'CRITICAL!' : '30s Authoritative'}
-            </p>
-          </div>
+        {/* High-contrast precision timer bar */}
+        <div className="w-full bg-[#090a0f] h-1.5 rounded-none overflow-hidden">
+          <div
+            className={`h-full transition-all duration-100 ease-linear ${
+              isCritical ? 'bg-[#ef4444]' : isWarning ? 'bg-[#f59e0b]' : 'bg-[#3b82f6]'
+            }`}
+            style={{ width: `${timerBarPct}%` }}
+          />
         </div>
       </div>
 
-      {/* Middle Arena Grid: Question Image + 4 Interactive Option Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch my-auto">
-        {/* Left Image Viewport */}
+      {/* Main Grid: Hardware Image Frame + 4 Tactical Option Buttons */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 my-6 items-stretch">
+        
+        {/* Left: Hardware Image Display */}
         <div className="lg:col-span-6 flex flex-col">
-          <div className="glass-panel-glow rounded-3xl p-3 sm:p-4 border border-cyan-500/30 relative group overflow-hidden flex-1 flex flex-col justify-center items-center bg-[#070e1c]">
-            {/* Image container */}
+          <div className="bg-[#0f1118] border border-[#252b3b] p-3 rounded-sm flex-1 flex flex-col justify-center items-center relative group">
             <div
               onClick={() => setZoomOpen(true)}
-              className="relative w-full h-[320px] sm:h-[400px] rounded-2xl overflow-hidden cursor-zoom-in bg-slate-950 flex items-center justify-center border border-cyan-500/20 group-hover:border-cyan-400/50 transition-all duration-300"
+              className="relative w-full h-[320px] sm:h-[380px] bg-[#07080c] flex items-center justify-center cursor-zoom-in overflow-hidden border border-[#1b1f2b]"
             >
               {question?.image ? (
                 <img
                   src={question.image}
-                  alt={`Question ${question.id}`}
-                  className="w-full h-full object-cover sm:object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+                  alt={`Hardware Component ${question.id}`}
+                  className="w-full h-full object-contain"
                 />
               ) : (
-                <div className="text-slate-500 text-sm font-mono">Loading High-Res Image...</div>
+                <span className="font-mono text-xs text-[#525a6c]">Awaiting Image...</span>
               )}
 
-              {/* Ambient scanline overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent pointer-events-none opacity-40 animate-scanline" />
-
-              {/* Zoom Inspect Badge */}
-              <div className="absolute bottom-3 right-3 bg-slate-900/80 border border-slate-700/80 backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-mono text-slate-200 flex items-center space-x-1.5 opacity-90 group-hover:opacity-100 group-hover:bg-cyan-950/90 group-hover:border-cyan-400 transition">
-                <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Click to Inspect / Zoom</span>
+              {/* Minimal Zoom Badge */}
+              <div className="absolute bottom-2 right-2 bg-[#0c0d12]/90 border border-[#282d3d] px-2 py-1 text-[10px] font-mono text-[#9ba3b5] flex items-center space-x-1 group-hover:text-white group-hover:border-[#4b546d] transition">
+                <Maximize2 className="w-3 h-3" />
+                <span>EXPAND / ZOOM</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right 4 Options Matrix */}
-        <div className="lg:col-span-6 flex flex-col justify-center space-y-3.5">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-xs uppercase font-mono font-bold tracking-widest text-cyan-400">
-              Select Correct Option
-            </span>
-            <span className="text-[11px] font-mono text-slate-400">Keyboard Shortcuts: 1-4 or A-D</span>
+        {/* Right: 4 High-Contrast Tactical Selection Buttons */}
+        <div className="lg:col-span-6 flex flex-col justify-center space-y-3 font-mono">
+          <div className="flex items-center justify-between text-[11px] text-[#7d8699] px-0.5">
+            <span>SELECT MATCHING COMPONENT</span>
+            <span>SHORTCUTS: [A, B, C, D]</span>
           </div>
 
-          <div className="space-y-3">
-            {question?.options.map((opt, index) => {
+          <div className="space-y-2.5">
+            {question?.options.map((opt) => {
               const isSelected = selectedOption === opt.id;
               return (
                 <button
                   key={opt.id}
                   disabled={isLocked}
                   onClick={() => handleSelectOption(opt.id)}
-                  className={`w-full text-left p-4 sm:p-4.5 rounded-2xl border transition-all flex items-center space-x-4 cursor-pointer relative overflow-hidden group ${
+                  className={`w-full text-left p-4 rounded-sm border transition-all flex items-center space-x-4 cursor-pointer ${
                     isSelected
-                      ? 'bg-cyan-500/25 border-cyan-400 text-white shadow-lg shadow-cyan-500/30 scale-[1.01]'
+                      ? 'bg-[#1d2b45] border-[#3b82f6] text-white'
                       : isLocked
-                      ? 'bg-slate-900/40 border-slate-800 text-slate-500 cursor-not-allowed opacity-50'
-                      : 'glass-card-interactive text-slate-200 hover:text-white'
+                      ? 'bg-[#0e1017] border-[#1c202d] text-[#555e71] cursor-not-allowed'
+                      : 'bg-[#11141c] border-[#252a3b] hover:bg-[#181c28] hover:border-[#40485f] text-[#d1d5db] hover:text-white'
                   }`}
                 >
-                  {/* Option Badge (A, B, C, D) */}
+                  {/* Key Label */}
                   <div
-                    className={`w-10 h-10 rounded-xl font-mono font-black text-sm flex items-center justify-center shrink-0 transition-all ${
+                    className={`w-8 h-8 font-bold text-xs flex items-center justify-center shrink-0 border ${
                       isSelected
-                        ? 'bg-gradient-to-tr from-cyan-400 to-sky-500 text-slate-950 font-black shadow-md'
-                        : 'bg-slate-800/80 border border-slate-700/80 text-cyan-400 group-hover:border-cyan-400 group-hover:bg-cyan-500/10'
+                        ? 'bg-[#3b82f6] border-[#3b82f6] text-white'
+                        : 'bg-[#171a25] border-[#2f3549] text-[#9ca3af]'
                     }`}
                   >
                     {opt.id}
                   </div>
 
-                  {/* Option Text */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm sm:text-base font-bold tracking-wide truncate">{opt.text}</p>
+                  {/* Option Label */}
+                  <div className="flex-1 font-sans font-semibold text-sm sm:text-base">
+                    {opt.text}
                   </div>
 
                   {/* Lock Indicator */}
-                  {isSelected ? (
-                    <div className="flex items-center space-x-1.5 text-xs font-mono font-bold text-cyan-300 shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-cyan-400 animate-pulse" />
-                      <span>LOCKED</span>
-                    </div>
-                  ) : (
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <ChevronRight className="w-5 h-5 text-cyan-400" />
-                    </div>
+                  {isSelected && (
+                    <span className="text-[10px] font-mono font-bold text-[#60a5fa] uppercase tracking-wider">
+                      [LOCKED]
+                    </span>
                   )}
                 </button>
               );
             })}
           </div>
 
-          {/* Locked Notice */}
+          {/* Submission status note */}
           {isLocked && (
-            <div className="p-3 rounded-xl bg-cyan-950/70 border border-cyan-500/40 text-center animate-pulse">
-              <p className="text-xs font-mono text-cyan-300 font-semibold">
-                Answer choice locked in. Advancing to next question...
-              </p>
+            <div className="p-2.5 bg-[#141a28] border border-[#2b3a58] text-center">
+              <span className="text-[11px] font-mono text-[#93c5fd]">
+                Selection locked. Synchronizing with server...
+              </span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom Integrity Bar */}
-      <div className="mt-6 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-xs font-mono text-slate-400 gap-2">
-        <div className="flex items-center space-x-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>SESSION AUTHENTICATED:</span>
-          <span className="text-slate-200">{participant?.name || 'Participant'}</span>
+      {/* Bottom Telemetry Bar */}
+      <div className="border-t border-[#1e2230] pt-3 flex flex-wrap items-center justify-between text-[11px] font-mono text-[#6f788b]">
+        <div>
+          <span>CANDIDATE: </span>
+          <span className="text-white font-bold">{participant?.name}</span>
+          <span className="text-[#4b5563]"> ({participant?.email})</span>
         </div>
 
         <div>
-          <span>VIOLATIONS: </span>
-          <span className={violations > 0 ? 'text-rose-400 font-bold' : 'text-slate-300'}>
-            {violations} (Monitored)
+          <span>SECURITY VIOLATIONS: </span>
+          <span className={violations > 0 ? 'text-[#ef4444] font-bold' : 'text-[#9ca3af]'}>
+            {violations}
           </span>
         </div>
       </div>
 
-      {/* Image Zoom Modal */}
+      {/* Image Zoom Inspector Modal */}
       <ImageModal
         isOpen={zoomOpen}
         onClose={() => setZoomOpen(false)}

@@ -7,45 +7,37 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: {
-        cyber: {
-          dark: '#070b14',
-          card: 'rgba(15, 23, 42, 0.75)',
-          border: 'rgba(56, 189, 248, 0.2)',
-          accent: '#06b6d4',
-          neon: '#38bdf8',
-          purple: '#a855f7',
-          emerald: '#10b981',
-          rose: '#f43f5e',
-          amber: '#f59e0b',
-        }
-      },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        display: ['"Space Grotesk"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        mono: ['"Space Mono"', '"IBM Plex Mono"', 'monospace'],
       },
-      animation: {
-        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'scanline': 'scanline 8s linear infinite',
-      },
-      keyframes: {
-        glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 15px rgba(6, 182, 212, 0.2)' },
-          '50%': { boxShadow: '0 0 30px rgba(6, 182, 212, 0.8), inset 0 0 25px rgba(6, 182, 212, 0.4)' },
+      colors: {
+        surface: {
+          950: '#07080a',
+          900: '#0c0d12',
+          850: '#12141b',
+          800: '#171922',
+          700: '#222530',
+          600: '#2e3240',
         },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-8px)' },
+        border: {
+          subtle: '#1e212b',
+          strong: '#323746',
+          bright: '#4f566b',
         },
-        scanline: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(1000%)' },
+        signal: {
+          blue: '#3b82f6',
+          accent: '#2563eb',
+          amber: '#f59e0b',
+          red: '#ef4444',
+          green: '#10b981',
         }
       },
-      backdropBlur: {
-        xs: '2px',
+      letterSpacing: {
+        tighter: '-0.04em',
+        tight: '-0.02em',
+        widest: '0.15em',
       }
     },
   },

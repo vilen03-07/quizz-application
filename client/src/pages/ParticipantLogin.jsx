@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import { Sparkles, User, Mail, Building, ArrowRight, ShieldCheck, Clock, AlertTriangle, Eye } from 'lucide-react';
+import { ArrowRight, AlertCircle, Terminal, Shield, Clock } from 'lucide-react';
 import { soundFx } from '../utils/audio';
 
-const AVATARS = [
-  { id: 'avatar-1', label: 'Cyber Ninja', icon: '⚡' },
-  { id: 'avatar-2', label: 'Quantum Hacker', icon: '🔮' },
-  { id: 'avatar-3', label: 'Tech Architect', icon: '💎' },
-  { id: 'avatar-4', label: 'Code Samurai', icon: '⚔️' },
-  { id: 'avatar-5', label: 'Circuit Master', icon: '🚀' },
-  { id: 'avatar-6', label: 'AI Specialist', icon: '🤖' },
+const BADGES = [
+  { id: 'ALPHA', label: 'Alpha' },
+  { id: 'BRAVO', label: 'Bravo' },
+  { id: 'CHARLIE', label: 'Charlie' },
+  { id: 'DELTA', label: 'Delta' },
+  { id: 'ECHO', label: 'Echo' },
+  { id: 'FOXTROT', label: 'Foxtrot' },
 ];
 
 export default function ParticipantLogin({ onLoginSuccess }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [department, setDepartment] = useState('');
-  const [avatar, setAvatar] = useState(AVATARS[0].id);
+  const [badge, setBadge] = useState(BADGES[0].id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
-      setError('Please fill in both your full name and email address.');
+      setError('Name and Email are required.');
       soundFx.playTimeout();
       return;
     }
@@ -39,14 +39,12 @@ export default function ParticipantLogin({ onLoginSuccess }) {
           name: name.trim(),
           email: email.trim().toLowerCase(),
           department: department.trim() || 'General',
-          avatar,
+          avatar: badge,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to authenticate');
-      }
+      if (!res.ok) throw new Error(data.error || 'Failed to authenticate');
 
       localStorage.setItem('quiz_token', data.token);
       localStorage.setItem('quiz_participant', JSON.stringify(data.participant));
@@ -61,172 +59,139 @@ export default function ParticipantLogin({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-[88vh] flex items-center justify-center p-4 lg:p-8 relative z-10">
-      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        {/* Left hero / Rules briefing */}
-        <div className="lg:col-span-6 space-y-6">
-          <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>REAL-TIME HARDWARE & TECH QUIZ</span>
-          </div>
+    <div className="min-h-[85vh] max-w-7xl mx-auto px-4 lg:px-8 py-10 flex items-center justify-center relative z-10">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        
+        {/* Left Column: Asymmetrical Editorial Specification */}
+        <div className="lg:col-span-7 space-y-8">
+          <div className="space-y-3">
+            <div className="inline-flex items-center space-x-2 font-mono text-[11px] text-[#3b82f6] uppercase tracking-widest bg-[#131622] border border-[#232a3d] px-2.5 py-1 rounded-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3b82f6]" />
+              <span>Assessment Protocol #2026</span>
+            </div>
 
-          <div className="space-y-2">
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-              Test Your Tech Knowledge <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-purple-400">
-                In The Real-Time Arena
-              </span>
+            <h1 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight leading-[1.1]">
+              Hardware Component <br />
+              <span className="text-[#9ca3af]">Visual Identification</span>
             </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Identify 10 high-tech hardware components from ultra-high-definition imagery. Your progress and selections are streamed live to the administrator.
+            
+            <p className="text-sm text-[#949dae] leading-relaxed max-w-lg pt-1">
+              Identify 10 high-precision hardware units from authentic macro imagery. 
+              Submissions are locked authoritatively on selection and streamed live to the administrator.
             </p>
           </div>
 
-          {/* Rules Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <div className="glass-panel p-3.5 rounded-xl border border-cyan-500/20 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 shrink-0">
-                <Clock className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-100">30s Per Question</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Authoritative countdown with automatic submission</p>
-              </div>
+          {/* Technical Protocol Data Table (No generic 3-card/4-card rows) */}
+          <div className="border border-[#202532] bg-[#0f1117] rounded-sm divide-y divide-[#1c202a] text-xs font-mono">
+            <div className="flex items-center justify-between p-3.5">
+              <span className="text-[#848d9f]">Time Allowance</span>
+              <span className="text-white font-bold">30.0s Per Question (Strict Auto-Advance)</span>
             </div>
-
-            <div className="glass-panel p-3.5 rounded-xl border border-purple-500/20 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-purple-500/10 text-purple-400 shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-100">Zero Retry Lock</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Single selection locks instantly. No backtracking</p>
-              </div>
+            <div className="flex items-center justify-between p-3.5">
+              <span className="text-[#848d9f]">Answer Submission</span>
+              <span className="text-white font-bold">Single-Choice Lock (Zero Retry)</span>
             </div>
-
-            <div className="glass-panel p-3.5 rounded-xl border border-emerald-500/20 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
-                <Eye className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-100">Live Admin Stream</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Real-time telemetry and score broadcasts</p>
-              </div>
+            <div className="flex items-center justify-between p-3.5">
+              <span className="text-[#848d9f]">Integrity Monitor</span>
+              <span className="text-white font-bold">Active Tab Blur & Window Switch Logging</span>
             </div>
-
-            <div className="glass-panel p-3.5 rounded-xl border border-amber-500/20 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
-                <AlertTriangle className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-100">Anti-Cheat Monitor</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">Tab-switching & blur events flagged in real-time</p>
-              </div>
+            <div className="flex items-center justify-between p-3.5">
+              <span className="text-[#848d9f]">Telemetry Stream</span>
+              <span className="text-[#3b82f6] font-bold">Live WebSocket to Admin Console</span>
             </div>
           </div>
         </div>
 
-        {/* Right login form card */}
-        <div className="lg:col-span-6">
-          <div className="glass-panel-glow rounded-3xl p-6 sm:p-8 border border-cyan-500/30 relative">
-            <div className="mb-6 text-left">
-              <h2 className="text-2xl font-black text-white tracking-wide">Participant Portal</h2>
-              <p className="text-xs text-slate-400 mt-1">Enter your details to generate your verified quiz session</p>
+        {/* Right Column: Clean, High-Contrast Sign-in Form */}
+        <div className="lg:col-span-5">
+          <div className="bg-[#11131a] border border-[#262b3a] p-6 sm:p-8 rounded-sm space-y-6">
+            <div className="border-b border-[#202534] pb-4">
+              <h2 className="font-display font-bold text-lg text-white uppercase tracking-tight">
+                Participant Check-in
+              </h2>
+              <p className="font-mono text-[11px] text-[#7d8597] mt-0.5">
+                Register unique session credentials to proceed
+              </p>
             </div>
 
             {error && (
-              <div className="mb-5 p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/40 text-rose-200 text-xs flex items-center space-x-2 animate-shake">
-                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="p-3 bg-[#241216] border border-[#6b212e] text-[#fca5a5] text-xs font-mono flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 text-[#ef4444] shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Full Name */}
+            <form onSubmit={handleSubmit} className="space-y-4 font-mono text-xs">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-                  Full Name <span className="text-cyan-400">*</span>
+                <label className="block text-[#9ba3b5] uppercase font-bold mb-1 tracking-wider text-[10px]">
+                  Full Name <span className="text-[#3b82f6]">*</span>
                 </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Nageshwar Rao"
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 transition"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Alex Mercer"
+                  className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
+                />
               </div>
 
-              {/* Email */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-                  Email Address <span className="text-cyan-400">*</span>
+                <label className="block text-[#9ba3b5] uppercase font-bold mb-1 tracking-wider text-[10px]">
+                  Email Address <span className="text-[#3b82f6]">*</span>
                 </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. nageshwar@domain.com"
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 transition"
-                  />
-                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. alex@organization.com"
+                  className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
+                />
               </div>
 
-              {/* Department / Team */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
-                  Department / Organization / Roll No. (Optional)
+                <label className="block text-[#9ba3b5] uppercase font-bold mb-1 tracking-wider text-[10px]">
+                  Department / Unit / Roll ID
                 </label>
-                <div className="relative">
-                  <Building className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    placeholder="e.g. Engineering / Tech Team"
-                    className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20 transition"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  placeholder="e.g. Hardware Engineering"
+                  className="w-full bg-[#0a0b0f] border border-[#272d3e] focus:border-[#3b82f6] text-white px-3 py-2.5 rounded-sm focus:outline-none transition"
+                />
               </div>
 
-              {/* Avatar Selector */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">
-                  Choose Player Badge
+                <label className="block text-[#9ba3b5] uppercase font-bold mb-1.5 tracking-wider text-[10px]">
+                  Callsign Badge
                 </label>
-                <div className="grid grid-cols-6 gap-2">
-                  {AVATARS.map((av) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {BADGES.map((b) => (
                     <button
-                      key={av.id}
+                      key={b.id}
                       type="button"
-                      onClick={() => setAvatar(av.id)}
-                      className={`p-2.5 rounded-xl border text-xl flex flex-col items-center justify-center transition-all ${
-                        avatar === av.id
-                          ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 scale-105 shadow-md shadow-cyan-500/30'
-                          : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                      onClick={() => setBadge(b.id)}
+                      className={`py-2 px-3 text-center border text-[11px] font-bold rounded-sm transition ${
+                        badge === b.id
+                          ? 'bg-[#1e2738] border-[#3b82f6] text-white'
+                          : 'bg-[#0c0d12] border-[#222633] text-[#7d8597] hover:border-[#353b4d] hover:text-white'
                       }`}
-                      title={av.label}
                     >
-                      <span>{av.icon}</span>
+                      {b.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Submit / Enter Arena */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-6 py-3.5 px-6 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-500 to-purple-600 hover:from-cyan-400 hover:via-sky-400 hover:to-purple-500 text-white font-black tracking-wider uppercase text-sm flex items-center justify-center space-x-2 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full mt-4 py-3 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-mono font-bold uppercase tracking-wider text-xs flex items-center justify-center space-x-2 rounded-sm transition disabled:opacity-50 cursor-pointer"
               >
-                <span>{loading ? 'Initializing Session...' : 'Enter Quiz Arena'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{loading ? 'INITIALIZING...' : 'START ASSESSMENT'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>
           </div>
