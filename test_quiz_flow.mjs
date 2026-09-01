@@ -18,15 +18,16 @@ async function runTests() {
   console.log('   ✅ Admin successfully authenticated. JWT Token obtained.');
 
   // Test 2: Participant Registration
-  console.log('\n2️⃣ Testing Participant Registration (Alice Quantum)...');
+  const testEmail = `alice_${Date.now()}@quantum.tech`;
+  console.log(`\n2️⃣ Testing Participant Registration (${testEmail})...`);
   const regRes = await fetch(`${BASE_URL}/api/auth/participant`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       name: 'Alice Quantum',
-      email: 'alice@quantum.tech',
+      email: testEmail,
       department: 'Robotics Lab',
-      avatar: 'avatar-1',
+      avatar: 'ALPHA',
     }),
   });
   assert.strictEqual(regRes.status, 200, 'Participant registration failed');

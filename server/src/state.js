@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { validateAndNormalizeEmail } from './emailValidator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,7 +34,11 @@ class QuizStateManager {
         const data = JSON.parse(raw);
         if (data.participants) {
           for (const [id, p] of Object.entries(data.participants)) {
-            // Reset online status on reload
+            // Ensure normalizedEmail exists for legacy data
+            if (!p.normalizedEmail && p.email) {
+              const val = validateAndNormalizeEmail(p.email);
+              p.normalizedEmail = val.isValid ? val.normalizedEmail : p.email.toLowerCase();
+            }
             p.isOnline = false;
             p.socketId = null;
             this.participants.set(id, p);
@@ -83,20 +88,45 @@ class QuizStateManager {
   }
 
   registerParticipant({ id, name, email, avatar, department }) {
-    // Check if participant with email already exists
+    const emailValidation = validateAndNormalizeEmail(email);
+    if (!emailValidation.isValid) {
+      throw new Error(emailValidation.error || 'Invalid email address provided.');
+    }
+
+    const { normalizedEmail, originalEmail } = emailValidation;
+
+    // Check if participant with normalized email already exists
     let existing = Array.from(this.participants.values()).find(
-      (p) => p.email && p.email.toLowerCase() === email.toLowerCase()
+      (p) => p.normalizedEmail === normalizedEmail || (p.email && p.email.toLowerCase() === originalEmail)
     );
 
     if (existing) {
-      return { participant: existing, isExisting: true };
+      // Ensure normalizedEmail is synced
+      existing.normalizedEmail = normalizedEmail;
+
+      // If participant has completed the quiz, return completed block status
+      if (existing.status === 'COMPLETED') {
+        this.logEvent('BLOCKED_RETAKE_ATTEMPT', `Duplicate attempt blocked for ${existing.name} (${normalizedEmail})`, existing.id);
+        return {
+          participant: existing,
+          isExisting: true,
+          isCompleted: true,
+          error: 'QUIZ_ALREADY_COMPLETED',
+          message: 'You have already completed this quiz. Only one attempt is permitted per verified email address.',
+        };
+      }
+
+      // If participant is resuming an in-progress or not-started quiz
+      this.logEvent('PARTICIPANT_RESUMED', `${existing.name} resumed session with ${normalizedEmail}`, existing.id);
+      return { participant: existing, isExisting: true, isCompleted: false };
     }
 
     const newParticipant = {
       id: id || `p_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       name: name.trim(),
-      email: email.trim().toLowerCase(),
-      avatar: avatar || 'avatar-1',
+      email: originalEmail,
+      normalizedEmail,
+      avatar: avatar || 'ALPHA',
       department: department || 'General',
       registeredAt: new Date().toISOString(),
       currentQuestionIndex: 0, // 0 to 9
@@ -108,14 +138,15 @@ class QuizStateManager {
       status: 'NOT_STARTED', // 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED'
       isOnline: false,
       socketId: null,
+      sessionVersion: 1,
       violations: [], // { type: 'TAB_SWITCH', timestamp: string }
       completedAt: null,
     };
 
     this.participants.set(newParticipant.id, newParticipant);
-    this.logEvent('PARTICIPANT_REGISTERED', `${newParticipant.name} (${newParticipant.email}) registered`, newParticipant.id);
+    this.logEvent('PARTICIPANT_REGISTERED', `${newParticipant.name} registered (${normalizedEmail})`, newParticipant.id);
     this.saveState();
-    return { participant: newParticipant, isExisting: false };
+    return { participant: newParticipant, isExisting: false, isCompleted: false };
   }
 
   getParticipant(id) {

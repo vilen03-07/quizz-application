@@ -134,26 +134,45 @@ app.post('/api/auth/participant', (req, res) => {
     return res.status(400).json({ error: 'Name and Email are strictly required.' });
   }
 
-  const { participant, isExisting } = quizState.registerParticipant({
-    name,
-    email,
-    avatar,
-    department,
-  });
+  try {
+    const regResult = quizState.registerParticipant({
+      name,
+      email,
+      avatar,
+      department,
+    });
 
-  const token = signParticipantToken(participant);
+    if (regResult.isCompleted) {
+      return res.status(403).json({
+        error: regResult.message,
+        code: 'QUIZ_ALREADY_COMPLETED',
+        participant: {
+          id: regResult.participant.id,
+          name: regResult.participant.name,
+          email: regResult.participant.email,
+          score: regResult.participant.score,
+          completedAt: regResult.participant.completedAt,
+        },
+      });
+    }
 
-  broadcastLiveStreamUpdate(participant, {
-    event: isExisting ? 'PARTICIPANT_RECONNECTED' : 'PARTICIPANT_JOINED',
-  });
+    const { participant, isExisting } = regResult;
+    const token = signParticipantToken(participant);
 
-  res.json({
-    token,
-    participant,
-    isExisting,
-    totalQuestions: questions.length,
-    timePerQuestionSec: quizState.settings.timePerQuestionSec,
-  });
+    broadcastLiveStreamUpdate(participant, {
+      event: isExisting ? 'PARTICIPANT_RECONNECTED' : 'PARTICIPANT_JOINED',
+    });
+
+    res.json({
+      token,
+      participant,
+      isExisting,
+      totalQuestions: questions.length,
+      timePerQuestionSec: quizState.settings.timePerQuestionSec,
+    });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
 });
 
 // Participant: Start / Resume Quiz
