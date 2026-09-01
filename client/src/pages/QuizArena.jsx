@@ -8,6 +8,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { soundFx } from '../utils/audio';
+import { getApiUrl } from '../config';
 import ImageModal from '../components/ImageModal';
 
 const DURATION_SEC = 30;
@@ -33,7 +34,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
   const fetchCurrentState = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/quiz/current', {
+      const res = await fetch(getApiUrl('/api/quiz/current'), {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -41,7 +42,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
       if (!res.ok) throw new Error(data.error || 'Failed to fetch question');
 
       if (data.status === 'NOT_STARTED') {
-        const startRes = await fetch('/api/quiz/start', {
+        const startRes = await fetch(getApiUrl('/api/quiz/start'), {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -103,7 +104,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
     setTimeout(() => setViolationAlert(null), 4000);
 
     try {
-      await fetch('/api/quiz/violation', {
+      await fetch(getApiUrl('/api/quiz/violation'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +153,7 @@ export default function QuizArena({ token, participant, socket, onQuizComplete }
       }
 
       try {
-        const res = await fetch('/api/quiz/submit', {
+        const res = await fetch(getApiUrl('/api/quiz/submit'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

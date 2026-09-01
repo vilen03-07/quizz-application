@@ -20,6 +20,7 @@ import {
   Terminal,
 } from 'lucide-react';
 import { soundFx } from '../utils/audio';
+import { getApiUrl } from '../config';
 
 export default function AdminDashboard({ adminToken, socket, onLogout }) {
   const [activeTab, setActiveTab] = useState('live_stream'); // 'live_stream' | 'heatmap' | 'leaderboard' | 'images' | 'logs'
@@ -49,7 +50,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
   const fetchSnapshot = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/admin/snapshot', {
+      const res = await fetch(getApiUrl('/api/admin/snapshot'), {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       const data = await res.json();
@@ -139,7 +140,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
 
     setBroadcastSending(true);
     try {
-      const res = await fetch('/api/admin/broadcast', {
+      const res = await fetch(getApiUrl('/api/admin/broadcast'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +163,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
     if (!window.confirm('Reset this participant session?')) return;
 
     try {
-      const res = await fetch(`/api/admin/participants/${pId}/reset`, {
+      const res = await fetch(getApiUrl(`/api/admin/participants/${pId}/reset`), {
         method: 'POST',
         headers: { Authorization: `Bearer ${adminToken}` },
       });
@@ -179,7 +180,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
     if (!window.confirm('Permanently delete participant?')) return;
 
     try {
-      const res = await fetch(`/api/admin/participants/${pId}`, {
+      const res = await fetch(getApiUrl(`/api/admin/participants/${pId}`), {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${adminToken}` },
       });
@@ -207,7 +208,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
     formData.append('image', file);
 
     try {
-      const res = await fetch(`/api/admin/questions/${uploadingForQ}/image`, {
+      const res = await fetch(getApiUrl(`/api/admin/questions/${uploadingForQ}/image`), {
         method: 'POST',
         headers: { Authorization: `Bearer ${adminToken}` },
         body: formData,
@@ -225,7 +226,7 @@ export default function AdminDashboard({ adminToken, socket, onLogout }) {
   };
 
   const handleExportCSV = () => {
-    window.open(`/api/admin/export/csv?token=${adminToken}`, '_blank');
+    window.open(getApiUrl(`/api/admin/export/csv?token=${adminToken}`), '_blank');
   };
 
   const totalCount = snapshot.participants.length;

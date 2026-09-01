@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { soundFx } from '../utils/audio';
+import { getApiUrl } from '../config';
 import ImageModal from '../components/ImageModal';
 
 export default function QuizResults({ token, onRestart }) {
@@ -21,7 +22,7 @@ export default function QuizResults({ token, onRestart }) {
     const fetchReview = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/quiz/review', {
+        const res = await fetch(getApiUrl('/api/quiz/review'), {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();

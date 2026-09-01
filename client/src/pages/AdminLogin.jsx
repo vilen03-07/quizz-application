@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
 import { soundFx } from '../utils/audio';
+import { getApiUrl } from '../config';
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [username, setUsername] = useState('admin');
@@ -15,7 +16,7 @@ export default function AdminLogin({ onLoginSuccess }) {
     soundFx.playSelect();
 
     try {
-      const res = await fetch('/api/auth/admin', {
+      const res = await fetch(getApiUrl('/api/auth/admin'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

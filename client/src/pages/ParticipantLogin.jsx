@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, AlertCircle, Terminal, Shield, Clock } from 'lucide-react';
 import { soundFx } from '../utils/audio';
+import { getApiUrl } from '../config';
 
 const BADGES = [
   { id: 'ALPHA', label: 'Alpha' },
@@ -32,7 +33,7 @@ export default function ParticipantLogin({ onLoginSuccess }) {
     soundFx.playSelect();
 
     try {
-      const res = await fetch('/api/auth/participant', {
+      const res = await fetch(getApiUrl('/api/auth/participant'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

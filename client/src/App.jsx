@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
+import { getSocketUrl } from './config';
 import Navbar from './components/Navbar';
 import BackgroundCanvas from './components/BackgroundCanvas';
 import BroadcastBanner from './components/BroadcastBanner';
@@ -26,7 +27,7 @@ function App() {
 
   // Initialize Socket.io
   useEffect(() => {
-    const s = io(window.location.origin, {
+    const s = io(getSocketUrl(), {
       transports: ['websocket', 'polling'],
     });
 
