@@ -1,0 +1,12 @@
+{
+  "name": "cyberquiz-platform",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/src/server.js",
+    "server": "node server/src/server.js",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "test": "node test_quiz_flow.mjs"
+  }
+}

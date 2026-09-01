@@ -1,0 +1,75 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const imagesDir = path.join(__dirname, '../public/images');
+
+const placeholderDefs = [
+  { id: 6, title: "SIM CARD TRAY", sub: "Component 06 - Identification" },
+  { id: 7, title: "CAMERA SENSOR", sub: "Component 07 - Identification" },
+  { id: 8, title: "OPTICAL FIBER", sub: "Component 08 - Identification" },
+  { id: 9, title: "MOTHERBOARD", sub: "Component 09 - Identification" },
+  { id: 10, title: "JOYSTICK", sub: "Component 10 - Identification" },
+];
+
+placeholderDefs.forEach(({ id, title, sub }) => {
+  const filePath = path.join(imagesDir, `q${id}.jpg`);
+  if (!fs.existsSync(filePath)) {
+    // Generate a sleek high-res SVG and save as placeholder
+    const svg = `
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e17"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <rect width="800" height="600" fill="url(#bgGrad)" />
+  <rect width="800" height="600" fill="url(#grid)" opacity="0.6" />
+  <circle cx="400" cy="270" r="220" fill="url(#glow)" />
+  
+  <rect x="180" y="90" width="440" height="340" rx="20" fill="#0f172a" stroke="#334155" stroke-width="2" opacity="0.85"/>
+  <rect x="200" y="110" width="400" height="300" rx="14" fill="#020617" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="6,4"/>
+  
+  <!-- Holographic Box Icon -->
+  <g transform="translate(400, 240)">
+    <circle cx="0" cy="0" r="60" fill="#06b6d4" fill-opacity="0.1" stroke="#06b6d4" stroke-width="2" />
+    <path d="M-25,-15 L0,-30 L25,-15 L0,0 Z M-25,-15 L-25,15 L0,30 L0,0 Z M25,-15 L25,15 L0,30 L0,0 Z" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="0" cy="0" r="8" fill="#38bdf8" />
+  </g>
+  
+  <text x="400" y="360" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle" letter-spacing="2">
+    QUESTION #${id} IMAGE SLOT
+  </text>
+  <text x="400" y="388" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="14" text-anchor="middle">
+    Awaiting custom image upload (${title})
+  </text>
+  
+  <rect x="250" y="470" width="300" height="42" rx="21" fill="#0369a1" fill-opacity="0.2" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="400" y="497" fill="#38bdf8" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+    Upload via Admin Dashboard Image Manager
+  </text>
+</svg>`;
+    
+    // Also save as SVG and as fallback JPG
+    fs.writeFileSync(path.join(imagesDir, `q${id}.svg`), svg);
+    // Write svg to jpg file directly since modern browsers handle svg data seamlessly if referenced
+    fs.writeFileSync(filePath, svg);
+    console.log(`Generated placeholder for q${id}`);
+  }
+});

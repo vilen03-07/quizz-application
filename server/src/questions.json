@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "image": "/images/q1.jpg",
+    "options": [
+      { "id": "A", "text": "NFC Reader" },
+      { "id": "B", "text": "Card Reader" },
+      { "id": "C", "text": "Barcode Scanner" },
+      { "id": "D", "text": "Biometric Scanner" }
+    ],
+    "correctAnswer": "D",
+    "correctAnswerText": "Biometric Scanner",
+    "explanation": "The image shows a biometric terminal featuring an optical fingerprint scanner and keypad."
+  },
+  {
+    "id": 2,
+    "image": "/images/q2.jpg",
+    "options": [
+      { "id": "A", "text": "Iris Scanner" },
+      { "id": "B", "text": "Voice Recognition" },
+      { "id": "C", "text": "Face Scanner" },
+      { "id": "D", "text": "Fingerprint Scanner" }
+    ],
+    "correctAnswer": "A",
+    "correctAnswerText": "Iris Scanner",
+    "explanation": "The image clearly shows an illuminated optical sensor labeled 'IRIS SCANNER' designed for biometric eye identification."
+  },
+  {
+    "id": 3,
+    "image": "/images/q3.jpg",
+    "options": [
+      { "id": "A", "text": "3D Camera" },
+      { "id": "B", "text": "Smart Glasses" },
+      { "id": "C", "text": "VR Headset" },
+      { "id": "D", "text": "AR Scanner" }
+    ],
+    "correctAnswer": "C",
+    "correctAnswerText": "VR Headset",
+    "explanation": "The image displays an immersive Virtual Reality (VR) head-mounted display unit with tracking sensors and head strap."
+  },
+  {
+    "id": 4,
+    "image": "/images/q4.jpg",
+    "options": [
+      { "id": "A", "text": "Ethernet Adapter" },
+      { "id": "B", "text": "Wi-Fi Router" },
+      { "id": "C", "text": "Modem" },
+      { "id": "D", "text": "Network Hub" }
+    ],
+    "correctAnswer": "D",
+    "correctAnswerText": "Network Hub",
+    "explanation": "The image showcases an 8-port Ethernet Network Switch / Hub with status indicator LEDs."
+  },
+  {
+    "id": 5,
+    "image": "/images/q5.jpg",
+    "options": [
+      { "id": "A", "text": "Memory Card" },
+      { "id": "B", "text": "Microchip" },
+      { "id": "C", "text": "SIM Card" },
+      { "id": "D", "text": "Heat Sink" }
+    ],
+    "correctAnswer": "B",
+    "correctAnswerText": "Microchip",
+    "explanation": "The image shows an ATmega328P integrated circuit (Microchip / Microcontroller IC) with dual in-line pins."
+  },
+  {
+    "id": 6,
+    "image": "/images/q6.jpg",
+    "options": [
+      { "id": "A", "text": "Memory Card Slot" },
+      { "id": "B", "text": "SIM Card Tray" },
+      { "id": "C", "text": "Charging Port" },
+      { "id": "D", "text": "Speaker Grille" }
+    ],
+    "correctAnswer": "B",
+    "correctAnswerText": "SIM Card Tray",
+    "explanation": "The component is a smartphone ejectable SIM Card Tray holding a micro SIM card."
+  },
+  {
+    "id": 7,
+    "image": "/images/q7.jpg",
+    "options": [
+      { "id": "A", "text": "Microchip" },
+      { "id": "B", "text": "Flash Module" },
+      { "id": "C", "text": "Display Panel" },
+      { "id": "D", "text": "Camera Sensor" }
+    ],
+    "correctAnswer": "D",
+    "correctAnswerText": "Camera Sensor",
+    "explanation": "The image displays an optical digital CMOS Camera Sensor module."
+  },
+  {
+    "id": 8,
+    "image": "/images/q8.jpg",
+    "options": [
+      { "id": "A", "text": "Electrical Power Transmission" },
+      { "id": "B", "text": "Optical Fiber" },
+      { "id": "C", "text": "Audio Amplification" },
+      { "id": "D", "text": "Wireless Signal Transmission" }
+    ],
+    "correctAnswer": "B",
+    "correctAnswerText": "Optical Fiber",
+    "explanation": "The component illustrates high-speed optical fiber glass filaments transmitting light pulses."
+  },
+  {
+    "id": 9,
+    "image": "/images/q9.jpg",
+    "options": [
+      { "id": "A", "text": "Circuit Board" },
+      { "id": "B", "text": "Motherboard" },
+      { "id": "C", "text": "Graphics Card" },
+      { "id": "D", "text": "Control Board" }
+    ],
+    "correctAnswer": "B",
+    "correctAnswerText": "Motherboard",
+    "explanation": "The main computer printed circuit board (Motherboard) housing the CPU socket, RAM slots, and chipsets."
+  },
+  {
+    "id": 10,
+    "image": "/images/q10.jpg",
+    "options": [
+      { "id": "A", "text": "Remote Control" },
+      { "id": "B", "text": "Control Panel" },
+      { "id": "C", "text": "Game Controller" },
+      { "id": "D", "text": "Joystick" }
+    ],
+    "correctAnswer": "D",
+    "correctAnswerText": "Joystick",
+    "explanation": "An analog directional control stick (Joystick) used for gaming, simulation, and hardware navigation."
+  }
+]
